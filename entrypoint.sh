@@ -6,7 +6,7 @@ set -e
 if [ "${1}" ]
 then
   exec "$@"
-# otherwise we attempt to run boinc.
+# otherwise we attempt to run fahclient.
 else
   /opt/fahclient/FAHClient \
       --user="${USER}" \
