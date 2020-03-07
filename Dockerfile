@@ -18,7 +18,9 @@ RUN useradd --system folding && \
     apt-get autoremove --yes && \
     rm -rf /var/lib/apt/lists/*
 
-COPY entrypoint.sh /opt/fahclient
+COPY --chown=folding:folding entrypoint.sh /opt/fahclient
+
+RUN chmod +x /opt/fahclient/entrypoint.sh
 
 ENV USER "Anonymous"
 ENV TEAM "0"
