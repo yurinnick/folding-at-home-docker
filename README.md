@@ -2,6 +2,11 @@
 
 Folding@home is a project focused on disease research. The problems we’re solving require so many computer calcul­ations – and we need your help to find the cures!
 
+## Note
+Currently I only support CPU workloads. For GPU support, please use [wandhydrant
+/
+folding-at-home-docker-gpu](https://github.com/wandhydrant/folding-at-home-docker-gpu) fork.
+
 ## Usage
 
 ### docker
