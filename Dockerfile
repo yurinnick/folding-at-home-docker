@@ -3,7 +3,7 @@ FROM debian:stable-slim
 ARG version="v7.5"
 
 RUN useradd --system folding && \
-    mkdir -p /opt/fahclient && \
+    mkdir -p /opt/fahclient/work && \
     # download and untar
     apt-get update -y && \
     apt-get install -y wget bzip2 && \
