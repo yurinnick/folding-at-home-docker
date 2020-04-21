@@ -1,6 +1,6 @@
 FROM debian:stable-slim
 
-ARG version="v7.5"
+ARG version="v7.6"
 
 RUN useradd --system folding && \
     mkdir -p /opt/fahclient/work && \
