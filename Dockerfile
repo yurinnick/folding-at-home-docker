@@ -26,6 +26,7 @@ ENV USER "Anonymous"
 ENV TEAM "0"
 ENV ENABLE_GPU "false"
 ENV ENABLE_SMP "true"
+ENV POWER "full"
 
 USER folding
 WORKDIR /opt/fahclient

@@ -7,6 +7,6 @@ set -e
     --passkey="${PASSKEY}" \
     --gpu="${ENABLE_GPU}" \
     --smp="${ENABLE_SMP}" \
-    --power=full \
+    --power="${POWER}" \
     --gui-enabled=false \
     "${@}"

@@ -57,6 +57,7 @@ TDB
 - PASSKEY - [optional] Folding@home [passkey](https://apps.foldingathome.org/getpasskey)
 - ENABLE_GPU - Enable GPU compute (default: false)
 - ENABLE_SMP - Enable auto-configuration of SMP slots (default: true)
+- POWER - "full" by default, but you can switch to "medium" or "light" (if your laptop runs too hot, or if your computer ventilates too much).
 
 Additional configuration parameters can be passed as command line arguments. To get the full list of parameters run:
 
