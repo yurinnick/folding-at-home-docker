@@ -3,9 +3,8 @@
 Folding@home is a project focused on disease research. The problems we’re solving require so many computer calcul­ations – and we need your help to find the cures!
 
 ## Note
-Currently I only support CPU workloads. For GPU support, please use [wandhydrant
-/
-folding-at-home-docker-gpu](https://github.com/wandhydrant/folding-at-home-docker-gpu) fork.
+
+This image is for CPU workloads. For GPU support (Nvidia), there is a dedicated image [described here](README.nvidia.md).
 
 ## Usage
 
@@ -55,7 +54,7 @@ TDB
 - USER - Folding@home username (default: Anonymous)
 - TEAM - Foldinghome team number (default: 0)
 - PASSKEY - [optional] Folding@home [passkey](https://apps.foldingathome.org/getpasskey)
-- ENABLE_GPU - Enable GPU compute (default: false)
+- ENABLE_GPU - Enable GPU compute (default: false). You will need [the GPU image](README.nvidia.md) for this.
 - ENABLE_SMP - Enable auto-configuration of SMP slots (default: true)
 - POWER - "full" by default, but you can switch to "medium" or "light" (if your laptop runs too hot, or if your computer ventilates too much).
 
