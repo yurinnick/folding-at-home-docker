@@ -1,5 +1,10 @@
 FROM nvidia/cuda:10.2-base-ubuntu18.04
 
+LABEL maintainer="wandhydrant" \
+      repository="https://github.com/yurinnick/folding-at-home-docker" \
+      description="Unofficial Folding@Home image for Nvidia GPU compute" \
+      version="7.6"
+
 ARG version="v7.6"
 
 RUN apt-get update && apt-get install -y --no-install-recommends \

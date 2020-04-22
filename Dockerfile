@@ -1,5 +1,10 @@
 FROM debian:stable-slim
 
+LABEL maintainer="yurinnick" \
+      repository="https://github.com/yurinnick/folding-at-home-docker" \
+      description="Unofficial Folding@Home image for CPU compute" \
+      version="7.6"
+
 ARG version="v7.6"
 
 RUN useradd --system folding && \
