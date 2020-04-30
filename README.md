@@ -25,11 +25,15 @@ docker run \
   -e TEAM=0 \
   -e ENABLE_GPU=[true|false] \
   -e ENABLE_SMP=true \
+  # Required only for nvidia image
+  --gpus all \
   --restart unless-stopped \
   yurinnick/folding-at-home:[latest|latest-nvidia]
 ```
 
 ### docker-compose
+
+**Note:** Currenly there is no gpu option support in docker-compose: [issue](https://github.com/docker/compose/issues/6691)
 
 ```
 ---
@@ -94,6 +98,7 @@ docker run \
   -e TEAM=0 \
   -e ENABLE_GPU=false \
   -e ENABLE_SMP=true \
+  --gpus all \
   --restart unless-stopped \
   yurinnick/folding-at-home \
   --allow 0/0 \
@@ -117,6 +122,7 @@ docker run \
   -e TEAM=0 \
   -e ENABLE_GPU=false \
   -e ENABLE_SMP=true \
+  --gpus all \
   --restart unless-stopped \
   yurinnick/folding-at-home \
   --allow 0/0 \
@@ -129,3 +135,4 @@ In this case Folding@home will be only accessiable by the link from the script b
 host=$(docker inspect --format "{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}" folding-at-home)
 echo http://${host}:7396
 ```
+
