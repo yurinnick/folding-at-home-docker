@@ -28,8 +28,10 @@ docker run \
   -e TEAM=0 \
   -e ENABLE_GPU=[true|false] \
   -e ENABLE_SMP=true \
-  # Required only for nvidia image
+  # Required only for nvidia image \
   --gpus all \
+  # Required to persistent data \
+  -v /path/to/fahdata:/opt/fahclient/work
   --restart unless-stopped \
   yurinnick/folding-at-home:[latest|latest-nvidia]
 ```
@@ -108,6 +110,19 @@ docker run \
   --web-allow 0/0
 ```
 
+## Persistent Storage
+
+By default Docker doesn't store any data outside of a
+continer, so upon stop/restart/recreate all temporary FAH
+data will be lost. To persistently store working data mount `/opt/fahclient/work` onto some directory on the disk.
+
+```
+docker run \
+...
+-v /path/to/fahdata:/opt/fahclient/work
+...
+```
+
 ## Additional Security
 
 ### Anonimous Hostname
@@ -116,7 +131,7 @@ To disable sharing your hostname, override current container hostname by adding 
 
 ### Host-only WebUI
 
-To enable Folding@home WebUI only on a target Docker host, simple do not expose WubUI port:
+To enable Folding@home WebUI only on a target Docker host, simple do not expose WebUI port:
 
 ```
 docker run \
