@@ -2,9 +2,12 @@
 
 ![DockerHub Pulls](https://badgen.net/docker/pulls/yurinnick/folding-at-home?icon=docker)
 ![DockerHub Stars](https://badgen.net/docker/stars/yurinnick/folding-at-home?icon=star&label=stars)
+[![Gitter](https://badges.gitter.im/folding-at-home-docker/community.svg)](https://gitter.im/folding-at-home-docker/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 Folding@home is a project focused on disease research. The problems we’re solving
 require so many computer calcul­ations – and we need your help to find the cures!
+
+If you have a question regarding the setup or found a bug feel free ping in the [Gitter chat](https://gitter.im/folding-at-home-docker/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge) or open an issue on Github.
 
 ## Image Flavors
 
