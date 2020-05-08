@@ -30,7 +30,7 @@ docker run \
   -e ENABLE_SMP=true \
   # Required only for nvidia image \
   --gpus all \
-  # Required to persistent data \
+  # Required for persistent data \
   -v /path/to/fahdata:/opt/fahclient/work
   --restart unless-stopped \
   yurinnick/folding-at-home:[latest|latest-nvidia]
