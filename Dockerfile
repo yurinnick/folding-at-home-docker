@@ -3,16 +3,16 @@ FROM debian:stable-slim
 LABEL maintainer="yurinnick" \
       repository="https://github.com/yurinnick/folding-at-home-docker" \
       description="Unofficial Folding@Home image for CPU compute" \
-      version="7.6"
+      version="7.6.13"
 
-ARG version="v7.6"
+ARG version="v7.6.13"
 
 RUN useradd --system folding && \
     mkdir -p /opt/fahclient/work && \
     # download and untar
     apt-get update -y && \
     apt-get install -y wget bzip2 && \
-    wget https://download.foldingathome.org/releases/public/release/fahclient/debian-stable-64bit/${version}/latest.tar.bz2 -O /tmp/fahclient.tar.bz2 && \
+    wget https://download.foldingathome.org/releases/public/release/fahclient/debian-stable-64bit/${version%.*}/fahclient_${version#v}-64bit-release.tar.bz2 -O /tmp/fahclient.tar.bz2 && \
     tar -xjf /tmp/fahclient.tar.bz2 -C /opt/fahclient --strip-components=1 && \
     # fix permissions
     chown -R folding:folding /opt/fahclient && \

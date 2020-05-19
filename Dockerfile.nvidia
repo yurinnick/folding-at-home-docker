@@ -3,9 +3,9 @@ FROM nvidia/cuda:10.2-base-ubuntu18.04
 LABEL maintainer="wandhydrant" \
       repository="https://github.com/yurinnick/folding-at-home-docker" \
       description="Unofficial Folding@Home image for Nvidia GPU compute" \
-      version="7.6"
+      version="7.6.13"
 
-ARG version="v7.6"
+ARG version="v7.6.13"
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
 # Install PPA dependency
@@ -18,10 +18,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # download and untar
     apt-get update -y && \
     apt-get install -y wget bzip2 && \
-    wget https://download.foldingathome.org/releases/public/release/fahclient/debian-stable-64bit/${version}/latest.tar.bz2 -O /tmp/fahclient.tar.bz2 && \
+    wget https://download.foldingathome.org/releases/public/release/fahclient/debian-stable-64bit/${version%.*}/fahclient_${version#v}-64bit-release.tar.bz2 -O /tmp/fahclient.tar.bz2 && \
     tar -xjf /tmp/fahclient.tar.bz2 -C /opt/fahclient --strip-components=1 && \
-# need GPUs.txt for bug in fahclient 7.6.9
-    wget https://apps.foldingathome.org/GPUs.txt -O /opt/fahclient/GPUs.txt && \
 # fix permissions
     chown -R folding:folding /opt/fahclient && \
 # cleanup
