@@ -6,6 +6,7 @@ LABEL maintainer="wandhydrant" \
       version="7.6.13"
 
 ARG version="v7.6.13"
+ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
 # Install PPA dependency
