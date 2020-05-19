@@ -9,7 +9,12 @@ services:
       - TEAM=0
       - ENABLE_GPU=false
       - ENABLE_SMP=true
+    volumes:
+      - /path/to/fahdata:/opt/fahclient/work
     ports:
       - 7396:7396
       - 36330:36330
+    command:
+      - --allow 0/0
+      - --web-allow 0/0
     restart: unless-stopped
