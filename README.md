@@ -31,7 +31,7 @@ docker run \
   # Required only for nvidia image \
   --gpus all \
   # Required for persistent data \
-  -v /path/to/fahdata:/opt/fahclient/work
+  -v /path/to/fahdata:/opt/fahclient/work \
   --restart unless-stopped \
   yurinnick/folding-at-home:[latest|latest-nvidia]
 ```
