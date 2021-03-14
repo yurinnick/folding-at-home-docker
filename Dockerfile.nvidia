@@ -1,55 +1,55 @@
-FROM nvidia/cuda:10.2-base-ubuntu18.04
+FROM nvidia/cuda:11.2.1-base
 
-LABEL maintainer="wandhydrant" \
+ARG VERSION="v7.6.21"
+ARG OVERLAY_VERSION="v2.2.0.3"
+ARG OVERLAY_ARCH="amd64"
+
+LABEL maintainer="wandhydrant, yurinnick" \
       repository="https://github.com/yurinnick/folding-at-home-docker" \
       description="Unofficial Folding@Home image for Nvidia GPU compute" \
-      version="7.6.13"
+      version="${VERSION}"
 
-ARG version="v7.6.13"
 ENV DEBIAN_FRONTEND=noninteractive
-
-RUN apt-get update && apt-get install -y --no-install-recommends \
-# Install PPA dependency
-    software-properties-common \
-# Install Time Zone Database
-        tzdata && \
-# Install folding@home client
-    useradd --system folding && \
+RUN useradd --system folding && \
     mkdir -p /opt/fahclient/work && \
-# download and untar
     apt-get update -y && \
-    apt-get install -y wget bzip2 && \
-    wget https://download.foldingathome.org/releases/public/release/fahclient/debian-stable-64bit/${version%.*}/fahclient_${version#v}-64bit-release.tar.bz2 -O /tmp/fahclient.tar.bz2 && \
+    apt-get install -y wget bzip2 tzdata && \
+    # Install s6init
+    wget https://github.com/just-containers/s6-overlay/releases/download/${OVERLAY_VERSION}/s6-overlay-${OVERLAY_ARCH}-installer -O /tmp/s6-overlay-installer && \
+    chmod +x /tmp/s6-overlay-installer && \
+    /tmp/s6-overlay-installer / && \
+    rm /tmp/s6-overlay-installer && \
+    # Install FAHClient
+    wget https://download.foldingathome.org/releases/public/release/fahclient/debian-stable-64bit/${VERSION%.*}/fahclient_${VERSION#v}-64bit-release.tar.bz2 -O /tmp/fahclient.tar.bz2 && \
     tar -xjf /tmp/fahclient.tar.bz2 -C /opt/fahclient --strip-components=1 && \
-# fix permissions
-    chown -R folding:folding /opt/fahclient && \
-# cleanup
-    rm -rf /tmp/fahclient.tar.bz2 && \
-# Install Nvidia OpenCL
+    # Install Nvidia OpenCL
+    apt-get install -y software-properties-common && \
     add-apt-repository -y ppa:graphics-drivers && \
     apt-get update && apt-get install -y --install-recommends \
     nvidia-opencl-dev && \
-# Cleaning up
+    # Fix permissions
+    chown -R folding:folding /opt/fahclient && \
+    # Cleanup
     apt-get remove -y software-properties-common && \
+    rm -rf /tmp/fahclient.tar.bz2 && \
     apt-get purge -y wget bzip2 && \
-    apt-get autoremove -y && \
     apt-get clean autoclean && \
+    apt-get autoremove --yes && \
     rm -rf /var/lib/apt/lists/*
 
-COPY --chown=folding:folding entrypoint.sh /opt/fahclient
-
-RUN chmod +x /opt/fahclient/entrypoint.sh
+COPY root/ /
+RUN chmod +x /init-wrapper.sh
 
 ENV USER "Anonymous"
 ENV TEAM "0"
-ENV ENABLE_GPU "true"
+ENV ENABLE_GPU "false"
 ENV ENABLE_SMP "true"
 ENV POWER "full"
+ENV EXTRA_OPTIONS ""
 
-USER folding
 WORKDIR /opt/fahclient
 
 EXPOSE 7396
 EXPOSE 36330
 
-ENTRYPOINT ["/opt/fahclient/entrypoint.sh"]
+ENTRYPOINT ["/init-wrapper.sh"]

@@ -13,11 +13,13 @@ If you have a question regarding the setup or found a bug feel free ping in the 
 
 Currently there are two types of image available:
 - `latest`, `cpu` - lightweight image for CPU only workloads
-- `latest-nvidia`, `nvidia` - image with Nvidia GPU support. More information [here](docs/gpu_support.md)
+- `latest-nvidia`, `nvidia` - image with Nvidia GPU support. More information [here](https://github.com/yurinnick/folding-at-home-docker#gpu-support)
 
 ## Usage
 
-### docker
+### docker cli
+
+**CPU Instance**
 
 ```
 docker run \
@@ -26,38 +28,48 @@ docker run \
   -p 36330:36330 \
   -e USER=Anonymous \
   -e TEAM=0 \
-  -e ENABLE_GPU=[true|false] \
   -e ENABLE_SMP=true \
-  # Required only for nvidia image \
-  --gpus all \
+  -e PUID=$(id -u) \
+  -e PGID=$(id -g) \
   # Required for persistent data \
   -v /path/to/fahdata:/opt/fahclient/work \
   --restart unless-stopped \
-  yurinnick/folding-at-home:[latest|latest-nvidia]
+  yurinnick/folding-at-home:latest
+```
+
+**GPU Instance**
+```
+docker run \
+  --name folding-at-home \
+  -p 7396:7396 \
+  -p 36330:36330 \
+  -e USER=Anonymous \
+  -e TEAM=0 \
+  -e ENABLE_SMP=true \
+  -e ENABLE_GPU=true \
+  -e PUID=$(id -u) \
+  -e PGID=$(id -g) \
+  # Required for persistent data \
+  -v /path/to/fahdata:/opt/fahclient/work \
+  --gpus all \
+  --restart unless-stopped \
+  yurinnick/folding-at-home:latest-nvidia
 ```
 
 ### docker-compose
 
-**Note:** Currenly there is no gpu option support in docker-compose: [issue](https://github.com/docker/compose/issues/6691)
+**Note: Requires docker-compose version 1.28+**
+
+**CPU Instance**
 
 ```
----
-version: "3"
-services:
-  folding-at-home:
-    image: yurinnick/folding-at-home:[latest|latest-nvidia]
-    container_name: folding-at-home
-    environment:
-      - USER=Anonymous
-      - TEAM=0
-      - ENABLE_GPU=[true|false]
-      - ENABLE_SMP=true
-    volumes:
-      - /path/to/fahdata:/opt/fahclient/work
-    ports:
-      - 7396:7396
-      - 36330:36330
-    restart: unless-stopped
+docker-compose up -d folding-at-home-cpu
+```
+
+**GPU Instance**
+
+```
+docker-compose up -d folding-at-home-gpu
 ```
 
 ## Building Locally
@@ -77,82 +89,37 @@ docker build -f Dockerfile.nvidia -t folding-at-home:nvidia .
 
 ## Parameters
 
-- USER - Folding@home username (default: Anonymous)
-- TEAM - Foldinghome team number (default: 0)
+- USER - Folding@home username (default: `Anonymous`)
+- TEAM - Foldinghome team number (default: `0`)
 - PASSKEY - [optional] Folding@home [passkey](https://apps.foldingathome.org/getpasskey)
-- ENABLE_GPU - Enable GPU compute (default: false).
-- ENABLE_SMP - Enable auto-configuration of SMP slots (default: true)
+- ENABLE_GPU - Enable GPU compute (default: `false`)
+- ENABLE_SMP - Enable auto-configuration of SMP slots (default: `true`)
 - POWER - "full" by default, but you can switch to "medium" or "light" (if your laptop runs
-too hot, or if your computer ventilates too much).
-
-Additional configuration parameters can be passed as command line arguments. To get the full
-list of parameters run:
-
-```
-docker run yurinnick/folding-at-home:latest --help
-```
-
-## Web Interface
-
-Web interface is locked to `localhost` by default, to enable remote access run:
-
-```
-docker run \
-  --name folding-at-home \
-  -p 7396:7396 \
-  -p 36330:36330 \
-  -e USER=Anonymous \
-  -e TEAM=0 \
-  -e ENABLE_GPU=false \
-  -e ENABLE_SMP=true \
-  --gpus all \
-  --restart unless-stopped \
-  yurinnick/folding-at-home \
-  --allow 0/0 \
-  --web-allow 0/0
-```
+too hot, or if your computer ventilates too much)
+- PUID - User ID for data volume. See details: [persistent-storage](https://github.com/yurinnick/folding-at-home-docker#persistent-storage) (default: `1000`)
+- PGID - Group ID for data volume. See details: [persistent-storage](https://github.com/yurinnick/folding-at-home-docker#persistent-storage) (default: `1000`)
+- ALLOWED_HOSTS - Allowed remote access to specified subnet (default: `127.0.0.1/32`)
+- EXTRA_OPTIONS - Additional FAHClient command-line options (default: "")
 
 ## Persistent Storage
 
-By default Docker doesn't store any data outside of a
-continer, so upon stop/restart/recreate all temporary FAH
+By default Docker doesn't store any data outside of a continer, so upon stop/restart/recreate all temporary FAH
 data will be lost. To persistently store working data mount `/opt/fahclient/work` onto some directory on the disk.
+
+While mounting local volume there may be permissions issues between the host and the container. 
+Specify current users PUID/PGID as parameters to ensure that data volume owned by the same user inside the container.
 
 ```
 docker run \
 ...
 -v /path/to/fahdata:/opt/fahclient/work
+-e PUID=$(id -u)
+-e PGID=$(id -g)
 ...
 ```
 
-## Additional Security
+# GPU Support
 
-### Anonimous Hostname
+This image currenly supports only Nvidia GPUs.
 
-To disable sharing your hostname, override current container hostname by adding `-h <hostname>` argument.
-
-### Host-only WebUI
-
-To enable Folding@home WebUI only on a target Docker host, simple do not expose WebUI port:
-
-```
-docker run \
-  --name folding-at-home \
-  -e USER=Anonymous \
-  -e TEAM=0 \
-  -e ENABLE_GPU=false \
-  -e ENABLE_SMP=true \
-  --gpus all \
-  --restart unless-stopped \
-  yurinnick/folding-at-home \
-  --allow 0/0 \
-  --web-allow 0/0
-```
-
-In this case Folding@home will be only accessiable by the link from the script below:
-
-```
-host=$(docker inspect --format "{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}" folding-at-home)
-echo http://${host}:7396
-```
-
+To enable Nvidia support in Docker follow the instructions on [Nvidia Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html#docker) installation guide for Docker. 
