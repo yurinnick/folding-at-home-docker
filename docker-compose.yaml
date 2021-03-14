@@ -1,20 +1,43 @@
 ---
-version: "3"
+version: "3.8"
 services:
-  folding-at-home:
-    image: yurinnick/folding-at-home
-    container_name: folding-at-home
+  folding-at-home-cpu:
+    image: yurinnick/folding-at-home:latest
+    container_name: folding-at-home-cpu
     environment:
       - USER=Anonymous
       - TEAM=0
       - ENABLE_GPU=false
       - ENABLE_SMP=true
+      - PUID=1000
+      - PGUI=1000
+      # - ALLOWED_HOSTS=0/0
     volumes:
-      - /path/to/fahdata:/opt/fahclient/work
+      - /home/yurinnick/OneDrive/Workspace/folding-at-home-docker/tmp:/opt/fahclient/work
     ports:
       - 7396:7396
       - 36330:36330
-    command:
-      - --allow 0/0
-      - --web-allow 0/0
+    restart: unless-stopped
+
+  folding-at-home-gpu:
+    image: yurinnick/folding-at-home:latest-nvidia
+    container_name: folding-at-home-gpu
+    environment:
+      - USER=Anonymous
+      - TEAM=0
+      - ENABLE_GPU=true
+      - ENABLE_SMP=true
+      - PUID=1000
+      - PGUI=1000
+      # - ALLOWED_HOSTS=0/0
+    volumes:
+      - /home/yurinnick/OneDrive/Workspace/folding-at-home-docker/tmp:/opt/fahclient/work
+    deploy:
+      resources:
+        reservations:
+          devices:
+          - capabilities: [gpu]
+    ports:
+      - 7396:7396
+      - 36330:36330
     restart: unless-stopped

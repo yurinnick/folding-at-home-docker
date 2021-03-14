@@ -1,0 +1,17 @@
+#!/usr/bin/with-contenv bash
+set -e
+
+cd /opt/fahclient
+exec \
+	s6-setuidgid folding \
+        /opt/fahclient/FAHClient \
+        --user="${USER}" \
+        --team="${TEAM}" \
+        --passkey="${PASSKEY}" \
+        --gpu="${ENABLE_GPU}" \
+        --smp="${ENABLE_SMP}" \
+        --power="${POWER}" \
+        --gui-enabled=false \
+        --allow "${ALLOWED_HOSTS}" \
+        --web-allow "${ALLOWED_HOSTS}" \
+        ${EXTRA_OPTIONS}
